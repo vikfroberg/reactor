@@ -7,7 +7,7 @@
     "type": "git",
     "url": "http://github.com/vikfroberg/reactor.git"
   },
-   "keywords": [
+  "keywords": [
     "cli",
     "elm",
     "tools"
