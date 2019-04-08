@@ -1,14 +1,33 @@
 {
-  "name": "reactor",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "name": "dev-reactor",
+  "version": "0.0.0",
+  "description": "A simple dev server for Elm and JS",
+  "author": "Viktor Fröberg <vikfroberg@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/vikfroberg/reactor.git"
   },
-  "author": "",
+   "keywords": [
+    "cli",
+    "elm",
+    "tools"
+  ],
+  "bin": {
+    "reactor": "./index.js"
+  },
+  "engines": {
+    "node": ">= 0.11.x"
+  },
   "license": "MIT",
   "dependencies": {
+    "@babel/core": "^7.4.3",
+    "babel-loader": "^8.0.5",
+    "commander": "^2.20.0",
+    "elm": "^0.19.0-bugfix6",
+    "elm-webpack-loader": "^5.0.0",
+    "express": "^4.16.4",
+    "memory-fs": "^0.4.1",
+    "unionfs": "^4.2.0",
     "webpack": "^4.29.6"
   }
 }
