@@ -1,5 +1,5 @@
 {
-  "name": "dev-reactor",
+  "name": "js-reactor",
   "version": "0.0.0",
   "description": "A simple dev server for Elm and JS",
   "author": "Viktor Fröberg <vikfroberg@gmail.com>",
@@ -13,7 +13,7 @@
     "tools"
   ],
   "bin": {
-    "reactor": "./index.js"
+    "js-reactor": "./index.js"
   },
   "engines": {
     "node": ">= 0.11.x"
