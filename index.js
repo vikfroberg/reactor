@@ -24,6 +24,9 @@ app.get("*", (req, res, next) => {
   try {
     const path = Path.resolve(__dirname, req.url);
     const relativePath = "." + path;
+    if (!fs.existsSync(relativePath)) {
+      return next();
+    }
     const stat = fs.lstatSync(relativePath);
     if (stat.isDirectory()) {
       const files = fs.readdirSync(relativePath);
@@ -83,9 +86,7 @@ app.get("*", (req, res, next) => {
         // compiler.resolvers.context.fileSystem = memoryFs;
 
         compiler.run((err, stats) => {
-          if (err || stats.hasErrors()) {
-            throw "COMPILER ERROR";
-          }
+          handleCompilerError(err, stats);
 
           const jsContent = stats.compilation.assets["bundle.js"].source();
 
@@ -131,7 +132,6 @@ app.get("*", (req, res, next) => {
                 test: /\.elm$/,
                 exclude: [/elm-stuff/, /node_modules/],
                 use: [
-                  { loader: "elm-hot-webpack-loader" },
                   {
                     loader: "elm-webpack-loader",
                     options: {
@@ -155,9 +155,7 @@ app.get("*", (req, res, next) => {
         compiler.outputFileSystem = mfs;
 
         compiler.run((err, stats) => {
-          if (err || stats.hasErrors()) {
-            throw "COMPILER ERROR";
-          }
+          handleCompilerError(err, stats);
 
           const jsContent = stats.compilation.assets["bundle.js"].source();
 
@@ -190,9 +188,29 @@ app.get("*", (req, res, next) => {
       throw new Error("Not a file or directory");
     }
   } catch (error) {
-    throw new Error(error.toString());
+    console.log(error);
   }
 });
+
+function handleCompilerError(err, stats) {
+  if (err) {
+    console.error(err.stack || err);
+    if (err.details) {
+      console.error(err.details);
+    }
+    return;
+  }
+
+  const info = stats.toJson();
+
+  if (stats.hasErrors()) {
+    console.error(info.errors);
+  }
+
+  if (stats.hasWarnings()) {
+    console.warn(info.warnings);
+  }
+}
 
 app.use("/", express.static(__dirname));
 
