@@ -1,6 +1,6 @@
 {
   "name": "reactor-server",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A simple dev server for Elm and JS",
   "author": "Viktor Fröberg <vikfroberg@gmail.com>",
   "repository": {
