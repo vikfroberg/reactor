@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const http = require("http");
-const fs = require("fs");
+var fs = require("graceful-fs");
 const Path = require("path");
 const express = require("express");
 const webpack = require("webpack");
