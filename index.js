@@ -77,6 +77,9 @@ app.get("*", (req, res, next) => {
                 },
               },
             ],
+            resolve: {
+              modulesDirectories: ["node_modules"],
+            },
           },
         });
 
@@ -142,6 +145,9 @@ app.get("*", (req, res, next) => {
                 ],
               },
             ],
+          },
+          resolveLoader: {
+            modules: [Path.resolve(__dirname, "node_modules")],
           },
           output: {
             filename: "bundle.js",
