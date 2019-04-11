@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const http = require("http");
-var fs = require("graceful-fs");
+const fs = require("graceful-fs");
 const Path = require("path");
 const express = require("express");
 const webpack = require("webpack");
@@ -38,21 +38,103 @@ app.get("*", (req, res, next) => {
           <head>
             <meta charset="utf-8">
             <title>${path}</title>
+            <style>
+              body {
+                margin: 0;
+                padding: 40px;
+                max-width: 600px;
+                background: #f2f1f6;
+              }
+              .header {
+                border: 1px solid #f2f1f6;
+                padding: 24px;
+                font-size: 18px;
+                font-family: menlo;
+                font-weight: bold;
+                border-bottom-width: 4px;
+                background: #fff;
+              }
+              .header__home {
+                color: #2e83e3;
+              }
+              .header__path {
+                color: #303030;
+              }
+              .list {
+                margin: 0;
+                padding: 0;
+                border: 1px solid #f2f1f6;
+                background: #fff;
+              }
+              .list__item--file {
+                margin: 0;
+                padding: 0;
+                list-style: none;
+                border-bottom: 1px solid #f2f1f6;
+              }
+              .list__item--dir {
+                margin: 0;
+                padding: 0;
+                list-style: none;
+                border-bottom: 1px solid #f2f1f6;
+              }
+              .list__item--dir svg {
+                vertical-align: middle;
+              }
+              .list__item--file:last-child,
+              .list__item--dir:last-child {
+                border-bottom: none;
+              }
+              .list__item_link {
+                text-decoration: none;
+                color: #303030;
+                fill: #303030;
+                font-family: menlo;
+                font-size: 14px;
+                padding: 24px;
+                display: block;
+              }
+              .list__item_link:hover {
+                background: #2e83e3;
+                color: #fff;
+                fill: #fff;
+              }
+            </style>
           </head>
           <body>
-            ${files
-              .map(fileOrDictionary => {
-                const fpath = Path.resolve(__dirname, path, fileOrDictionary);
-                const fstat = fs.lstatSync("." + fpath);
-                if (fstat.isFile()) {
-                  return `<li><a href="${fpath}">${fileOrDictionary}</a></li>`;
-                } else if (fstat.isDirectory()) {
-                  return `<li><a href="${fpath}">${fileOrDictionary}</a></li>`;
-                } else {
-                  return `<li><a href="${fpath}">${fileOrDictionary}</a></li>`;
-                }
-              })
-              .join("\n")}
+            <div class="header">
+              <span class="header__home">~</span>
+              <span class="header__path">${path}</span>
+            </div>
+            <ul class="list">
+              ${files
+                .map(x => ({ name: x, path: Path.resolve(__dirname, path, x) }))
+                .filter(file => fs.lstatSync("." + file.path).isDirectory())
+                .map(file => {
+                  return `
+                      <li class="list__item--dir">
+                        <a class="list__item_link" href="${file.path}">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/><path d="M0 0h24v24H0z" fill="none"/></svg>
+                          ${file.name}
+                        </a>
+                      </li>
+                    `;
+                })
+                .join("\n")}
+              ${files
+                .map(x => ({ name: x, path: Path.resolve(__dirname, path, x) }))
+                .filter(file => fs.lstatSync("." + file.path).isFile())
+                .map(file => {
+                  return `
+                      <li class="list__item--file">
+                        <a class="list__item_link" href="${file.path}">
+                          ${file.name}
+                        </a>
+                      </li>
+                    `;
+                })
+                .join("\n")}
+            </ul>
           </body>
         </html>
       `;
@@ -67,6 +149,9 @@ app.get("*", (req, res, next) => {
             filename: "bundle.js",
             path: "/",
           },
+          resolveLoader: {
+            modules: [Path.resolve(__dirname, "node_modules")],
+          },
           module: {
             rules: [
               {
@@ -77,9 +162,6 @@ app.get("*", (req, res, next) => {
                 },
               },
             ],
-            resolve: {
-              modulesDirectories: ["node_modules"],
-            },
           },
         });
 
@@ -218,7 +300,7 @@ function handleCompilerError(err, stats) {
   }
 }
 
-app.use("/", express.static(__dirname));
+app.use("/", express.static("./"));
 
 app.listen(port, () =>
   console.log(
